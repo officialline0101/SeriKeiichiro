@@ -753,41 +753,41 @@
         }
 
         function formatDate(dateStr) {
-            if (!dateStr) return '';
-            const date = new Date(dateStr);
-            return `${date.getFullYear()}年${('0' + (date.getMonth() + 1)).slice(-2)}月${('0' + date.getDate()).slice(-2)}日 ${('0' + date.getHours()).slice(-2)}:${('0' + date.getMinutes()).slice(-2)}`;
-        }
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    return `${date.getFullYear()}年${('0' + (date.getMonth() + 1)).slice(-2)}月${('0' + date.getDate()).slice(-2)}日 ${('0' + date.getHours()).slice(-2)}:${('0' + date.getMinutes()).slice(-2)}`;
+}
 
-        async function fetchAvailability(date) {
-            const startTime = new Date(date);
-            const endTime = new Date(date);
-            endTime.setDate(endTime.getDate() + 7);
+async function fetchAvailability(date) {
+    const startTime = new Date(date);
+    const endTime = new Date(date);
+    endTime.setDate(endTime.getDate() + 7);
 
-            const cacheKey = startTime.toISOString() + endTime.toISOString();
+    const cacheKey = startTime.toISOString() + endTime.toISOString();
 
-            // キャッシュを確認
-            if (availabilityCache[cacheKey]) {
-                console.log('Using cached data');
-                updateCalendar(availabilityCache[cacheKey].availability, availabilityCache[cacheKey].businessDays);
-                return;
-            }
+    // キャッシュを確認
+    if (availabilityCache[cacheKey]) {
+        console.log('Using cached data');
+        updateCalendar(availabilityCache[cacheKey].availability, availabilityCache[cacheKey].businessDays);
+        return;
+    }
 
-            const url = 'https://script.google.com/macros/s/AKfycbxzk9xRfFwIjaOTNDBlhkaWmbGVsikppy8FBYSgsSmp_FHNDG7Sg8EXhW7DrtPQJO49/exec' +
-                `?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`;
+    const url = 'https://script.google.com/macros/s/AKfycbx6do-Er_wk5eAg7_inll9PtajBzfFej9Bfv31dW5EdVbg5QJDaWQTHVOMChUZcjQ/exec' +
+        `?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`;
 
-            try {
-                showLoadingSpinner(); // Show loading spinner
-                const response = await fetch(url);
-                const data = await response.json();
-                console.log(data);
+    try {
+        showLoadingSpinner(); // Show loading spinner
+        const response = await fetch(url);
+        const data = await response.json();
+        console.log(data);
 
-                // 営業日の情報を抽出
-                const businessDays = data.filter(event => event.summary === "営業日").map(event => {
-                    return {
-                        start: new Date(event.startTime),
-                        end: new Date(event.endTime)
-                    };
-                });
+        // 営業日の情報を抽出
+        const businessDays = data.filter(event => event.summary === "営業日").map(event => {
+            return {
+                start: new Date(event.startTime),
+                end: new Date(event.endTime)
+            };
+        });
 
                 // データをキャッシュに保存
                 availabilityCache[cacheKey] = { availability: data, businessDays: businessDays };
@@ -800,45 +800,54 @@
             }
         }
 
-        function updateCalendar(availability, businessDays) {
-            const calendar = document.getElementById('calendar1');
-            const table = calendar.querySelector('table tbody');
+// 時間を正規化する関数
+function normalizeTime(date) {
+    const hours = date.getHours();
+    const normalizedHours = hours < 6 ? hours + 24 : hours; // 深夜時間は24時以降に変換
+    const normalizedDate = new Date(date);
+    normalizedDate.setHours(normalizedHours);
+    return normalizedDate;
+}
 
-            const times = [
-    '10:00', '10:30',
-    '11:00', '11:30',
-    '12:00', '12:30',
-    '13:00', '13:30',
-    '14:00', '14:30',
-    '15:00', '15:30',
-    '16:00', '16:30',
-    '17:00', '17:30',
-    '18:00', '18:30',
-    '19:00', '19:30',
-    '20:00', '20:30',
-    '21:00', '21:30',
-    '22:00', '22:30',
-    '23:00', '23:30',
-    '00:00', '00:30',
-    '01:00'
-];
+function updateCalendar(availability, businessDays) {
+    const calendar = document.getElementById('calendar1');
+    const table = calendar.querySelector('table tbody');
 
-            if (table.rows.length === 0) {
-                for (const time of times) {
-                    const row = document.createElement('tr');
-                    const timeCell = document.createElement('td');
-                    timeCell.textContent = time;
-                    row.appendChild(timeCell);
+    const times = [
+        '10:00', '10:30',
+        '11:00', '11:30',
+        '12:00', '12:30',
+        '13:00', '13:30',
+        '14:00', '14:30',
+        '15:00', '15:30',
+        '16:00', '16:30',
+        '17:00', '17:30',
+        '18:00', '18:30',
+        '19:00', '19:30',
+        '20:00', '20:30',
+        '21:00', '21:30',
+        '22:00', '22:30',
+        '23:00', '23:30',
+        '24:00', '24:30'
+    ];
 
-                    for (let i = 0; i < 7; i++) {
-                        const cell = document.createElement('td');
-                        cell.addEventListener('click', () => selectDate(cell));
-                        row.appendChild(cell);
-                    }
+    // テーブルの行を作成（初回のみ）
+    if (table.rows.length === 0) {
+        for (const time of times) {
+            const row = document.createElement('tr');
+            const timeCell = document.createElement('td');
+            timeCell.textContent = time; // 表示用の時間
+            row.appendChild(timeCell);
 
-                    table.appendChild(row);
-                }
+            for (let i = 0; i < 7; i++) {
+                const cell = document.createElement('td');
+                cell.addEventListener('click', () => selectDate(cell));
+                row.appendChild(cell);
             }
+
+            table.appendChild(row);
+        }
+    }
 
             // テーブルのヘッダーを更新
             updateCalendarHeader(currentDate);
@@ -891,11 +900,35 @@
                     slotEnd.setMinutes(slotStart.getMinutes() + menuDuration + visitDuration + irradiationsDuration);
 
 // 深夜3時から4時に終了する予約を不可にする
-if (slotEnd.getHours() === 1 && slotEnd.getMinutes() > 0) {
+if (slotEnd.getHours() === 3 && slotEnd.getMinutes() > 0) {
     cell.textContent = '✕';
     cell.classList.add('unavailable');
     continue;
-} else if (slotEnd.getHours() > 1 && slotEnd.getHours() < 8) {
+} else if (slotEnd.getHours() > 3 && slotEnd.getHours() < 9) {
+    cell.textContent = '✕';
+    cell.classList.add('unavailable');
+    continue;
+}
+
+// 30分後の時刻を計算
+const thirtyMinutesLater = new Date(now.getTime() + 30 * 60 * 1000);
+
+// 時間を26時～30時に変換する関数
+function normalizeTime(date) {
+    const hours = date.getHours();
+    const normalizedHours = hours < 6 ? hours + 24 : hours;
+    const normalizedDate = new Date(date);
+    normalizedDate.setHours(normalizedHours);
+    return normalizedDate;
+}
+
+// slotStartも正規化
+const normalizedSlotStart = normalizeTime(slotStart);
+const normalizedThirtyMinutesLater = normalizeTime(thirtyMinutesLater);
+
+// ここで終了時間を使った条件処理を行う
+// 例えば、リアルタイムで既に過ぎた時間帯や30分以内のスロットは×にする
+if (normalizedSlotStart < normalizedThirtyMinutesLater) {
     cell.textContent = '✕';
     cell.classList.add('unavailable');
     continue;

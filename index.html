@@ -764,6 +764,11 @@
         return;
     }
 
+    if (!formData.birthDate) {
+        alert('生年月日を入力してください。');
+        return;
+    }
+
     if (!formData.selectedSymptom) {
         alert('メニューを選択してください。');
         return;

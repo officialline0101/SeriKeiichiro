@@ -780,7 +780,7 @@
         text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\n生年月日：${formatDate(formData.birthDate)}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom},${formData.irradiationsCount}\n希望日時：\n${formData.dates[0]}\nメッセージ：${formData.message}`
     }]).then(() => {
         /* メッセージ送信成功時の処理 */
-        alert('当日キャンセルは無いようにお願いいたします。キャンセル料発生いたします。');
+        alert('当日キャンセルは無いようにお願いいたします。');
         /* LIFFウィンドウを閉じる */
         liff.closeWindow();
     }).catch((err) => {
@@ -837,12 +837,14 @@ async function fetchAvailability(date) {
             }
         }
 
-// 時間を正規化する関数
+// 時間を正規化する関数（時間だけを正規化して日付は変更しないようにする）
 function normalizeTime(date) {
-    const hours = date.getHours();
-    const normalizedHours = hours < 6 ? hours + 24 : hours; // 深夜時間は24時以降に変換
     const normalizedDate = new Date(date);
-    normalizedDate.setHours(normalizedHours);
+    const hours = date.getHours();
+    if (hours < 6) {
+        normalizedDate.setDate(normalizedDate.getDate() - 1); // 深夜は前日扱い
+        normalizedDate.setHours(hours + 24); // 0時～5時は24時～29時として扱う
+    }
     return normalizedDate;
 }
 
@@ -864,7 +866,8 @@ function updateCalendar(availability, businessDays) {
         '20:00', '20:30',
         '21:00', '21:30',
         '22:00', '22:30',
-        '23:00', '23:30'
+        '23:00', '23:30',
+        '24:00', '24:30', '25:00'
     ];
 
     // テーブルの行を作成（初回のみ）
@@ -940,18 +943,7 @@ if (slotEnd.getHours() === 1 && slotEnd.getMinutes() > 0) {
     cell.textContent = '✕';
     cell.classList.add('unavailable');
     continue;
-} else if (slotEnd.getHours() > 1 && slotEnd.getHours() < 8) {
-    cell.textContent = '✕';
-    cell.classList.add('unavailable');
-    continue;
-}
-
-// 深夜3時から4時に終了する予約を不可にする
-if (slotEnd.getHours() === 3 && slotEnd.getMinutes() > 0) {
-    cell.textContent = '✕';
-    cell.classList.add('unavailable');
-    continue;
-} else if (slotEnd.getHours() > 3 && slotEnd.getHours() < 9) {
+} else if (slotEnd.getHours() > 1 && slotEnd.getHours() < 4) {
     cell.textContent = '✕';
     cell.classList.add('unavailable');
     continue;

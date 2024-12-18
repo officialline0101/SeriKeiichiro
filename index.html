@@ -967,7 +967,7 @@ function updateCalendar(availability, businessDays) {
                     slotStart.setHours(parseInt(times[j].split(':')[0]), parseInt(times[j].split(':')[1]), 0, 0);
 
                     const slotEnd = new Date(slotStart);
-                    let menuDuration = selectedMenuTime || 20;
+                    let menuDuration = selectedMenuTime || 10;
                     let visitDuration = selectedVisitTime || 0;
                     let irradiationsDuration = selectedirradiationsTime || 0;
 
@@ -975,7 +975,7 @@ function updateCalendar(availability, businessDays) {
                     slotEnd.setMinutes(slotStart.getMinutes() + menuDuration + visitDuration + irradiationsDuration);
 
 // 深夜3時から4時に終了する予約を不可にする
-if (slotEnd.getHours() === 3 && slotEnd.getMinutes() > 10) {
+if (slotEnd.getHours() === 3 && slotEnd.getMinutes() > 0) {
     cell.textContent = '✕';
     cell.classList.add('unavailable');
     continue;

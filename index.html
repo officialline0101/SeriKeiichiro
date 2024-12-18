@@ -901,9 +901,7 @@ function updateCalendar(availability, businessDays) {
         '22:00', '22:30',
         '23:00', '23:30',
         '24:00', '24:30',
-        '25:00', '25:30',
-        '26:00', '26:30',
-        '27:00'
+        '25:00'
     ];
 
     // テーブルの行を作成（初回のみ）
@@ -975,11 +973,11 @@ function updateCalendar(availability, businessDays) {
                     slotEnd.setMinutes(slotStart.getMinutes() + menuDuration + visitDuration + irradiationsDuration);
 
 // 深夜3時から4時に終了する予約を不可にする
-if (slotEnd.getHours() === 3 && slotEnd.getMinutes() > 0) {
+if (slotEnd.getHours() === 1 && slotEnd.getMinutes() > 50) {
     cell.textContent = '✕';
     cell.classList.add('unavailable');
     continue;
-} else if (slotEnd.getHours() > 3 && slotEnd.getHours() < 9) {
+} else if (slotEnd.getHours() > 1 && slotEnd.getHours() < 9) {
     cell.textContent = '✕';
     cell.classList.add('unavailable');
     continue;

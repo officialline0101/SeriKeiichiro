@@ -973,7 +973,7 @@ function updateCalendar(availability, businessDays) {
                     slotEnd.setMinutes(slotStart.getMinutes() + menuDuration + visitDuration + irradiationsDuration);
 
 // 深夜3時から4時に終了する予約を不可にする
-if (slotEnd.getHours() === 1 && slotEnd.getMinutes() > 50) {
+if (slotEnd.getHours() === 1 && slotEnd.getMinutes() > 40) {
     cell.textContent = '✕';
     cell.classList.add('unavailable');
     continue;

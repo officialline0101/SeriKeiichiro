@@ -857,70 +857,70 @@ async function fetchAvailability(date) {
             }
         }
 
-// 時間を正規化する関数（27時までを当日として扱う）
-function normalizeTime(date) {
-    const normalizedDate = new Date(date);
-    const hours = normalizedDate.getHours();
-    if (hours >= 0 && hours <= 5) { // 深夜（0時～5時）は27時扱い
-        normalizedDate.setDate(normalizedDate.getDate() - 1); // 前日として扱う
-        normalizedDate.setHours(hours + 24); // 時間を27時表記に変換
-    }
-    return normalizedDate;
-}
-
-// 現在時刻をチェックし、27時を過ぎたらカレンダーの日付を翌日に進める
-function checkAndUpdateDate() {
-    const now = new Date();
-    const normalizedNow = normalizeTime(now); // 現在時刻を正規化
-
-    // 正規化された時刻が27時を超えた場合
-    if (normalizedNow.getHours() >= 27) {
-        currentDate.setDate(currentDate.getDate() + 1); // 翌日に日付を進める
-        updateCalendarHeader(currentDate); // カレンダーのヘッダーを更新
-        updateCalendar(availabilityCache[currentDate.toISOString()], businessDays); // カレンダーを更新
-    }
-}
-
-function updateCalendar(availability, businessDays) {
-    const calendar = document.getElementById('calendar1');
-    const table = calendar.querySelector('table tbody');
-
-    const times = [
-        '10:00', '10:30',
-        '11:00', '11:30',
-        '12:00', '12:30',
-        '13:00', '13:30',
-        '14:00', '14:30',
-        '15:00', '15:30',
-        '16:00', '16:30',
-        '17:00', '17:30',
-        '18:00', '18:30',
-        '19:00', '19:30',
-        '20:00', '20:30',
-        '21:00', '21:30',
-        '22:00', '22:30',
-        '23:00', '23:30',
-        '24:00', '24:30',
-        '25:00'
-    ];
-
-    // テーブルの行を作成（初回のみ）
-    if (table.rows.length === 0) {
-        for (const time of times) {
-            const row = document.createElement('tr');
-            const timeCell = document.createElement('td');
-            timeCell.textContent = time; // 表示用の時間
-            row.appendChild(timeCell);
-
-            for (let i = 0; i < 7; i++) {
-                const cell = document.createElement('td');
-                cell.addEventListener('click', () => selectDate(cell));
-                row.appendChild(cell);
+        // 時間を正規化する関数（27時までを当日として扱う）
+        function normalizeTime(date) {
+            const normalizedDate = new Date(date);
+            const hours = normalizedDate.getHours();
+            if (hours >= 0 && hours <= 5) { // 深夜（0時～5時）は27時扱い
+                normalizedDate.setDate(normalizedDate.getDate() - 1); // 前日として扱う
+                normalizedDate.setHours(hours + 24); // 時間を27時表記に変換
             }
-
-            table.appendChild(row);
+            return normalizedDate;
         }
-    }
+
+        // 現在時刻をチェックし、27時を過ぎたらカレンダーの日付を翌日に進める
+        function checkAndUpdateDate() {
+            const now = new Date();
+            const normalizedNow = normalizeTime(now); // 現在時刻を正規化
+
+            // 正規化された時刻が27時を超えた場合
+            if (normalizedNow.getHours() >= 27) {
+                currentDate.setDate(currentDate.getDate() + 1); // 翌日に日付を進める
+                updateCalendarHeader(currentDate); // カレンダーのヘッダーを更新
+                updateCalendar(availabilityCache[currentDate.toISOString()], businessDays); // カレンダーを更新
+            }
+        }
+
+        function updateCalendar(availability, businessDays) {
+            const calendar = document.getElementById('calendar1');
+            const table = calendar.querySelector('table tbody');
+
+            const times = [
+                '10:00', '10:30',
+                '11:00', '11:30',
+                '12:00', '12:30',
+                '13:00', '13:30',
+                '14:00', '14:30',
+                '15:00', '15:30',
+                '16:00', '16:30',
+                '17:00', '17:30',
+                '18:00', '18:30',
+                '19:00', '19:30',
+                '20:00', '20:30',
+                '21:00', '21:30',
+                '22:00', '22:30',
+                '23:00', '23:30',
+                '24:00', '24:30',
+                '25:00'
+            ];
+
+            // テーブルの行を作成（初回のみ）
+            if (table.rows.length === 0) {
+                for (const time of times) {
+                    const row = document.createElement('tr');
+                    const timeCell = document.createElement('td');
+                    timeCell.textContent = time; // 表示用の時間
+                    row.appendChild(timeCell);
+
+                    for (let i = 0; i < 7; i++) {
+                        const cell = document.createElement('td');
+                        cell.addEventListener('click', () => selectDate(cell));
+                        row.appendChild(cell);
+                    }
+
+                    table.appendChild(row);
+                }
+            }
 
             // テーブルのヘッダーを更新
             updateCalendarHeader(currentDate);
@@ -956,13 +956,21 @@ function updateCalendar(availability, businessDays) {
                 for (let j = 0; j < times.length; j++) {
                     const cell = table.rows[j].cells[i + 1];
 
-                    // すでにセルが✕の場合はスキップする
+                    // すでにセルが✕の場合はスキップ
                     if (cell.textContent === '✕') {
                         continue;
                     }
 
-                    const slotStart = new Date(day);
-                    slotStart.setHours(parseInt(times[j].split(':')[0]), parseInt(times[j].split(':')[1]), 0, 0);
+                    // 時間を解析してスロットの開始時刻を設定
+                    let slotStart = new Date(day);
+                    const [hours, minutes] = times[j].split(':').map(Number);
+                    slotStart.setHours(hours, minutes, 0, 0);
+
+                    // 24:00以降を前日に戻す
+                    if (hours >= 24) {
+                        slotStart.setDate(slotStart.getDate() - 1); // 前日に進める
+                        slotStart.setHours(hours - 24); // 時間を当日扱いに変換
+                    }
 
                     const slotEnd = new Date(slotStart);
                     let menuDuration = selectedMenuTime || 10;
@@ -972,28 +980,28 @@ function updateCalendar(availability, businessDays) {
                     // メニュー時間と訪問回数の時間を合計して、終了時間を設定
                     slotEnd.setMinutes(slotStart.getMinutes() + menuDuration + visitDuration + irradiationsDuration);
 
-// 30分後の時刻を計算
-const thirtyMinutesLater = new Date(now.getTime() + 30 * 60 * 1000);
+                    // 30分後の時刻を計算
+                    const thirtyMinutesLater = new Date(now.getTime() + 30 * 60 * 1000);
 
-// 時間を26時～30時に変換する関数
-function normalizeTime(date) {
-    const hours = date.getHours();
-    const normalizedHours = hours < 6 ? hours + 24 : hours;
-    const normalizedDate = new Date(date);
-    normalizedDate.setHours(normalizedHours);
-    return normalizedDate;
-}
+                    // 時間を26時～30時に変換する関数
+                    function normalizeTime(date) {
+                        const hours = date.getHours();
+                        const normalizedHours = hours < 6 ? hours + 24 : hours;
+                        const normalizedDate = new Date(date);
+                        normalizedDate.setHours(normalizedHours);
+                        return normalizedDate;
+                    }
 
-// slotStartも正規化
-const normalizedSlotStart = normalizeTime(slotStart);
-const normalizedThirtyMinutesLater = normalizeTime(thirtyMinutesLater);
+                    // slotStartも正規化
+                    const normalizedSlotStart = normalizeTime(slotStart);
+                    const normalizedThirtyMinutesLater = normalizeTime(thirtyMinutesLater);
 
-            // リアルタイムで過ぎた時間帯や30分以内のスロットを✕にする
-            if (slotStart < thirtyMinutesLater) {
-                cell.textContent = '✕';
-                cell.classList.add('unavailable');
-                continue;
-            }
+                    // リアルタイムで過ぎた時間帯や30分以内のスロットを✕にする
+                    if (slotStart < thirtyMinutesLater) {
+                        cell.textContent = '✕';
+                        cell.classList.add('unavailable');
+                        continue;
+                    }
 
                     const isBusinessDay = businessDays.some(businessDay => {
                         const businessDayStart = new Date(businessDay.start);

@@ -756,6 +756,17 @@
             const selectedTime = cell.parentElement.firstChild.textContent; // 時間
             const date = new Date(selectedDay);
 
+            // 時間を分解してチェック
+            const [hour, minute] = selectedTime.split(':').map(Number);
+            if (hour >= 24) {
+                // 24:00以降の場合、日付を前日に設定
+                date.setDate(date.getDate() - 1);
+                date.setHours(hour - 24, minute);
+            } else {
+                // 通常の時間設定
+                date.setHours(hour, minute);
+            }
+
             // 日付部分を「○○年○○月○○日 ○○:○○」形式に変換
             selectedFullDate = `${date.getFullYear()}年${('0' + (date.getMonth() + 1)).slice(-2)}月${('0' + date.getDate()).slice(-2)}日 ${selectedTime}`;
 

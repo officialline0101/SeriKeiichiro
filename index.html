@@ -1003,16 +1003,18 @@ async function fetchAvailability(date) {
                         return normalizedDate;
                     }
 
-                    // slotStartも正規化
-                    const normalizedSlotStart = normalizeTime(slotStart);
-                    const normalizedThirtyMinutesLater = normalizeTime(thirtyMinutesLater);
+                    const normalizedNow = normalizeTime(now);
+        const normalizedSlotStart = normalizeTime(slotStart);
 
-                    // リアルタイムで過ぎた時間帯や30分以内のスロットを✕にする
-                    if (slotStart < thirtyMinutesLater) {
-                        cell.textContent = '✕';
-                        cell.classList.add('unavailable');
-                        continue;
-                    }
+        // 当日かどうかを確認
+        const isToday = slotStart.toDateString() === now.toDateString();
+
+        // リアルタイムで過ぎた時間帯や30分以内のスロットを✕にする（当日のみ）
+        if (isToday && normalizedSlotStart < thirtyMinutesLater) {
+            cell.textContent = '✕';
+            cell.classList.add('unavailable');
+            continue;
+        }
 
                     const isBusinessDay = businessDays.some(businessDay => {
                         const businessDayStart = new Date(businessDay.start);

@@ -330,7 +330,7 @@
 <body>
     <div class="container">
         <h1>占屋伊千夜<br>予約フォーム</h1>
-        <div class="info-text">より詳細な予約はチャットにてお願いします<br>例：4名様以上、ひとり60分以上、<br>深夜1〜3時の予約等</div>
+        <div class="info-text">より詳細な予約はチャットにてお願いします<br>例：4名様以上、ひとり60分以上、<br>深夜0〜3時の予約等</div>
         <div class="label2">お名前　※必須</div>
         <input type="text" id="name1" placeholder="お名前を入力してください">
 
@@ -910,8 +910,7 @@ async function fetchAvailability(date) {
                 '20:00', '20:30',
                 '21:00', '21:30',
                 '22:00', '22:30',
-                '23:00', '23:30',
-                '24:00'
+                '23:00', '23:30'
             ];
 
             // テーブルの行を作成（初回のみ）

@@ -281,7 +281,7 @@
             /* 太文字に設定 */
         }
 
-                .datetime-placeholder {
+        .datetime-placeholder {
             position: absolute;
             top: 50%;
             left: 15px;
@@ -291,39 +291,84 @@
             pointer-events: none;
             transition: all 0.3s ease;
         }
+
         .datetime-input {
             width: 100%;
-            padding: 15px; /* サイズを大きく調整 */
-            font-size: 18px; /* フォントサイズを大きく */
+            padding: 15px;
+            /* サイズを大きく調整 */
+            font-size: 18px;
+            /* フォントサイズを大きく */
             border: 1px solid #ccc;
             border-radius: 4px;
             box-sizing: border-box;
         }
-        .datetime-input:focus + .datetime-placeholder,
-        .datetime-input:not(:placeholder-shown) + .datetime-placeholder {
+
+        .datetime-input:focus+.datetime-placeholder,
+        .datetime-input:not(:placeholder-shown)+.datetime-placeholder {
             visibility: hidden;
             opacity: 0;
         }
-        
-        .info-text {
-    margin-top: 10px; /* 下にずらすスペース */
-    font-size: 16px;  /* 読みやすいサイズ */
-    color: #000000;   /* 説明文らしい落ち着いた色 */
-    line-height: 1.5; /* テキスト間の高さを適切に設定 */
-    text-align: center; /* 中央揃え */
-    word-wrap: break-word; /* 長いテキストの折り返しを強制 */
-    transform: translateY(-15px); /* 上に10pxずらす */
-}
 
-/* 携帯端末向けのレスポンシブデザイン */
-@media (max-width: 768px) {
-    .info-text {
-        font-size: 16px; /* スマホでは少し小さく */
-        margin-top: 15px; /* 上下のマージンを調整 */
-        line-height: 1.4; /* テキストの高さ調整 */
-        transform: translateY(-15px); /* 上に10pxずらす */
-    }
-}
+        .info-text {
+            margin-top: 10px;
+            /* 下にずらすスペース */
+            font-size: 16px;
+            /* 読みやすいサイズ */
+            color: #000000;
+            /* 説明文らしい落ち着いた色 */
+            line-height: 1.5;
+            /* テキスト間の高さを適切に設定 */
+            text-align: center;
+            /* 中央揃え */
+            word-wrap: break-word;
+            /* 長いテキストの折り返しを強制 */
+            background-color: #eef9f5;
+            /* 青っぽい背景色を追加 */
+            transform: translateY(-15px);
+            /* 上に10pxずらす */
+        }
+
+        /* 携帯端末向けのレスポンシブデザイン */
+        @media (max-width: 768px) {
+            .info-text {
+                font-size: 16px;
+                /* スマホでは少し小さく */
+                margin-top: 15px;
+                /* 上下のマージンを調整 */
+                line-height: 1.4;
+                /* テキストの高さ調整 */
+                transform: translateY(-15px);
+                /* 上に10pxずらす */
+            }
+        }
+
+        .info-textmemo {
+            margin-top: 20px;
+            /* 上の余白 */
+            margin-bottom: 10px;
+            /* 下に白い隙間を追加 */
+            font-size: 13px;
+            color: #000000;
+            line-height: 1.5;
+            text-align: center;
+            word-wrap: break-word;
+            background-color: #eef9f5;
+            /* 青っぽい背景色を追加 */
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        /* 携帯端末向けのレスポンシブデザイン */
+        @media (max-width: 768px) {
+            .info-textmemo {
+                font-size: 11.5px;
+                /* スマホでは少し小さく */
+                margin-top: 10px;
+                /* 上下のマージンを調整 */
+                line-height: 2.0;
+                /* テキストの高さ調整 */
+            }
+        }
     </style>
 </head>
 
@@ -379,8 +424,10 @@
                 <span class="highlight-text">オプション</span>
             </div>
             <div class="irradiations">
-                <button type="button" id="firstirradiations" onclick="selectirradiations(this)" data-price="15000">電話鑑定</button>
-                <button type="button" id="firstirradiations" onclick="selectirradiations(this)" data-price="15000">ビデオ通話鑑定</button>
+                <button type="button" id="firstirradiations" onclick="selectirradiations(this)"
+                    data-price="15000">電話鑑定</button>
+                <button type="button" id="firstirradiations" onclick="selectirradiations(this)"
+                    data-price="15000">ビデオ通話鑑定</button>
             </div>
         </div>
 
@@ -389,11 +436,16 @@
                 <span class="highlight-text">◆2名様◆</span>
             </div>
             <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this, 'treatment6')" data-price="15000">10分ずつ計20分鑑定</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment7')" data-price="15000">20分ずつ計40分鑑定</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment8')" data-price="15000">30分ずつ計60分鑑定</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment9')" data-price="15000">40分ずつ計80分鑑定</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment10')" data-price="15000">50分ずつ計100分鑑定</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment6')"
+                    data-price="15000">10分ずつ計20分鑑定</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment7')"
+                    data-price="15000">20分ずつ計40分鑑定</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment8')"
+                    data-price="15000">30分ずつ計60分鑑定</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment9')"
+                    data-price="15000">40分ずつ計80分鑑定</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment10')"
+                    data-price="15000">50分ずつ計100分鑑定</button>
             </div>
         </div>
 
@@ -402,15 +454,21 @@
                 <span class="highlight-text">◆3名様◆</span>
             </div>
             <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this, 'treatment11')" data-price="15000">10分ずつ計30分鑑定</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment12')" data-price="15000">20分ずつ計60分鑑定</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment13')" data-price="15000">30分ずつ計90分鑑定</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment14')" data-price="15000">40分ずつ計120分鑑定</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment15')" data-price="15000">50分ずつ計150分鑑定</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment11')"
+                    data-price="15000">10分ずつ計30分鑑定</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment12')"
+                    data-price="15000">20分ずつ計60分鑑定</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment13')"
+                    data-price="15000">30分ずつ計90分鑑定</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment14')"
+                    data-price="15000">40分ずつ計120分鑑定</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment15')"
+                    data-price="15000">50分ずつ計150分鑑定</button>
             </div>
         </div>
 
         <div class="label">希望日時</div>
+        <div class="info-textmemo">深夜０〜３時の予約はチャットにてお持ちしております。</div>
         <div class="calendar-container">
             <div class="week-button-container">
                 <button class="week-button" onclick="previousWeek()">前の週</button>
@@ -442,6 +500,7 @@
         </div>
 
         <div class="label">メッセージ<br>（質問等お気軽にご記入ください）</div>
+        <div class="info-textmemo">深夜０〜３時の予約はチャットにてお持ちしております。</div>
         <textarea id="message" rows="4" placeholder="メッセージを入力してください"></textarea>
 
         <button class="submit-button" onclick="submitForm()">予約を行う</button>
@@ -775,87 +834,87 @@
         }
 
         function submitForm() {
-    const formData = {
-        name1: document.getElementById('name1').value.trim(),
-        dateofbirth1: document.getElementById('dateofbirth1').value.trim(), // 生年月日を取得
-        name2: document.getElementById('name2').value.trim(),
-        dateofbirth2: document.getElementById('dateofbirth2').value.trim(), // 生年月日を取得
-        name3: document.getElementById('name3').value.trim(),
-        dateofbirth3: document.getElementById('dateofbirth3').value.trim(), // 生年月日を取得
-        visitCount: visitCount,
-        selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null, // 空の選択肢をチェック
-        irradiationsCount: irradiationsCount,
-        dates: [selectedFullDate],
-        message: document.getElementById('message').value.trim()
-    };
-
-    // フォームデータのチェック
-    if (!formData.name1) {
-        alert('お名前を入力してください。');
-        return;
-    }
-
-    if (!formData.dateofbirth1) {
-        alert('生年月日を入力してください。');
-        return;
-    }
-
-    if (!formData.selectedSymptom) {
-        alert('メニューを選択してください。');
-        return;
-    }
-
-    // LINEトークにメッセージを送信
-    liff.sendMessages([{
-        type: 'text',
-        text: `【予約フォーム】\n1人目お名前：${formData.name1}\n1人目生年月日：${formData.dateofbirth1}\n2人目お名前：${formData.name2}\n2人目生年月日：${formData.dateofbirth2}\n3人目お名前：${formData.name3}\n3人目生年月日：${formData.dateofbirth3}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom},${formData.irradiationsCount}\n希望日時：\n${formData.dates[0]}\nメッセージ：${formData.message}`
-    }]).then(() => {
-        /* メッセージ送信成功時の処理 */
-        alert('当日キャンセルは無いようにお願いいたします。');
-        /* LIFFウィンドウを閉じる */
-        liff.closeWindow();
-    }).catch((err) => {
-        /* メッセージ送信失敗時の処理 */
-        console.error('メッセージの送信に失敗しました', err);
-    });
-}
-
-function formatDate(dateStr) {
-    if (!dateStr) return '';
-    const date = new Date(dateStr);
-    return `${date.getFullYear()}年${('0' + (date.getMonth() + 1)).slice(-2)}月${('0' + date.getDate()).slice(-2)}日`;
-}
-
-async function fetchAvailability(date) {
-    const startTime = new Date(date);
-    const endTime = new Date(date);
-    endTime.setDate(endTime.getDate() + 7);
-
-    const cacheKey = startTime.toISOString() + endTime.toISOString();
-
-    // キャッシュを確認
-    if (availabilityCache[cacheKey]) {
-        console.log('Using cached data');
-        updateCalendar(availabilityCache[cacheKey].availability, availabilityCache[cacheKey].businessDays);
-        return;
-    }
-
-    const url = 'https://script.google.com/macros/s/AKfycbzY_Cqd9uxbgVtUN8KN25zsJp4xac7xwDWY7M2E9nR6WWY5x_hx8Z_NCfxdAOpjboze/exec' +
-        `?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`;
-
-    try {
-        showLoadingSpinner(); // Show loading spinner
-        const response = await fetch(url);
-        const data = await response.json();
-        console.log(data);
-
-        // 営業日の情報を抽出
-        const businessDays = data.filter(event => event.summary === "営業日").map(event => {
-            return {
-                start: new Date(event.startTime),
-                end: new Date(event.endTime)
+            const formData = {
+                name1: document.getElementById('name1').value.trim(),
+                dateofbirth1: document.getElementById('dateofbirth1').value.trim(), // 生年月日を取得
+                name2: document.getElementById('name2').value.trim(),
+                dateofbirth2: document.getElementById('dateofbirth2').value.trim(), // 生年月日を取得
+                name3: document.getElementById('name3').value.trim(),
+                dateofbirth3: document.getElementById('dateofbirth3').value.trim(), // 生年月日を取得
+                visitCount: visitCount,
+                selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null, // 空の選択肢をチェック
+                irradiationsCount: irradiationsCount,
+                dates: [selectedFullDate],
+                message: document.getElementById('message').value.trim()
             };
-        });
+
+            // フォームデータのチェック
+            if (!formData.name1) {
+                alert('お名前を入力してください。');
+                return;
+            }
+
+            if (!formData.dateofbirth1) {
+                alert('生年月日を入力してください。');
+                return;
+            }
+
+            if (!formData.selectedSymptom) {
+                alert('メニューを選択してください。');
+                return;
+            }
+
+            // LINEトークにメッセージを送信
+            liff.sendMessages([{
+                type: 'text',
+                text: `【予約フォーム】\n1人目お名前：${formData.name1}\n1人目生年月日：${formData.dateofbirth1}\n2人目お名前：${formData.name2}\n2人目生年月日：${formData.dateofbirth2}\n3人目お名前：${formData.name3}\n3人目生年月日：${formData.dateofbirth3}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom},${formData.irradiationsCount}\n希望日時：\n${formData.dates[0]}\nメッセージ：${formData.message}`
+            }]).then(() => {
+                /* メッセージ送信成功時の処理 */
+                alert('当日キャンセルは無いようにお願いいたします。');
+                /* LIFFウィンドウを閉じる */
+                liff.closeWindow();
+            }).catch((err) => {
+                /* メッセージ送信失敗時の処理 */
+                console.error('メッセージの送信に失敗しました', err);
+            });
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '';
+            const date = new Date(dateStr);
+            return `${date.getFullYear()}年${('0' + (date.getMonth() + 1)).slice(-2)}月${('0' + date.getDate()).slice(-2)}日`;
+        }
+
+        async function fetchAvailability(date) {
+            const startTime = new Date(date);
+            const endTime = new Date(date);
+            endTime.setDate(endTime.getDate() + 7);
+
+            const cacheKey = startTime.toISOString() + endTime.toISOString();
+
+            // キャッシュを確認
+            if (availabilityCache[cacheKey]) {
+                console.log('Using cached data');
+                updateCalendar(availabilityCache[cacheKey].availability, availabilityCache[cacheKey].businessDays);
+                return;
+            }
+
+            const url = 'https://script.google.com/macros/s/AKfycbzY_Cqd9uxbgVtUN8KN25zsJp4xac7xwDWY7M2E9nR6WWY5x_hx8Z_NCfxdAOpjboze/exec' +
+                `?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`;
+
+            try {
+                showLoadingSpinner(); // Show loading spinner
+                const response = await fetch(url);
+                const data = await response.json();
+                console.log(data);
+
+                // 営業日の情報を抽出
+                const businessDays = data.filter(event => event.summary === "営業日").map(event => {
+                    return {
+                        start: new Date(event.startTime),
+                        end: new Date(event.endTime)
+                    };
+                });
 
                 // データをキャッシュに保存
                 availabilityCache[cacheKey] = { availability: data, businessDays: businessDays };
@@ -1002,17 +1061,17 @@ async function fetchAvailability(date) {
                     }
 
                     const normalizedNow = normalizeTime(now);
-        const normalizedSlotStart = normalizeTime(slotStart);
+                    const normalizedSlotStart = normalizeTime(slotStart);
 
-        // 当日かどうかを確認
-        const isToday = slotStart.toDateString() === now.toDateString();
+                    // 当日かどうかを確認
+                    const isToday = slotStart.toDateString() === now.toDateString();
 
-        // リアルタイムで過ぎた時間帯や30分以内のスロットを✕にする（当日のみ）
-        if (isToday && normalizedSlotStart < thirtyMinutesLater) {
-            cell.textContent = '✕';
-            cell.classList.add('unavailable');
-            continue;
-        }
+                    // リアルタイムで過ぎた時間帯や30分以内のスロットを✕にする（当日のみ）
+                    if (isToday && normalizedSlotStart < thirtyMinutesLater) {
+                        cell.textContent = '✕';
+                        cell.classList.add('unavailable');
+                        continue;
+                    }
 
                     const isBusinessDay = businessDays.some(businessDay => {
                         const businessDayStart = new Date(businessDay.start);

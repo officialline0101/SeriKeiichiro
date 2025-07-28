@@ -1755,6 +1755,13 @@
                         continue;
                     }
 
+      // 過去の時間は✕
+        if (slotStart < now) {
+            cell.textContent = '✕';
+            cell.classList.add('unavailable');
+            continue;
+        }
+
                     const isBusinessDay = businessDays.some(businessDay => {
                         const businessDayStart = new Date(businessDay.start);
                         const businessDayEnd = new Date(businessDay.end);

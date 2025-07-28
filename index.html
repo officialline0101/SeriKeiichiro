@@ -895,14 +895,14 @@
                 <span class="highlight-text">◆占い教室◆</span>
             </div>
             <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this, 'treatment21')" data-price="4000">占い教室</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment21')" data-price="4000">タロット講座</button>
                 <div class="info-texturanai">⇧タップしてください⇧<br>毎月第1、第3火曜日で希望日をご入力ください。<br>例.7月第1火曜日</div>
                 <input type="text" id="kibounitizi" placeholder="希望日を入力してください">
             </div>
         </div>
 
-        <div class="label">希望日時</div>
-        <div class="info-textmemo">10〜11時と0〜3時の予約は<br>チャットにてお待ちしております。</div>
+        <div class="label" id="dateLabel">希望日時</div>
+        <div class="info-textmemo" id="infoTextMemo">10〜11時と0〜3時の予約は<br>チャットにてお待ちしております。</div>
         <div class="calendar-container">
             <!-- 月を独立して配置 -->
             <div class="current-month-container">
@@ -1211,7 +1211,7 @@
                 const calendarContainer = document.querySelector('.calendar-container');
 
                 const activeButton = document.querySelector('.symptoms button.active');
-                const isKyoushitsu = activeButton && activeButton.textContent.includes('占い教室');
+                const isKyoushitsu = activeButton && activeButton.textContent.includes('タロット講座');
 
                 if (activeButton && !isKyoushitsu) {
                     // 「占い教室」以外が選ばれている場合のみ表示
@@ -1221,12 +1221,6 @@
                     calendarContainer.style.display = 'none';
                 }
             });
-        });
-
-
-        // 初期状態でカレンダーを非表示にする
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelector('.calendar-container').style.display = 'none';
         });
 
         // 日付セルのクリックイベントで希望日時を更新
@@ -1360,7 +1354,6 @@
                 });
             }
 
-
             // 表示を更新
             updateDisplayInfo();
         }
@@ -1424,38 +1417,56 @@
             fetchAvailability(currentDate);
         }
 
-        function showMenu(menu) {
-            // すべてのメニューボタンの選択状態をリセット
-            document.querySelectorAll('.menu-sections button').forEach(button => {
-                button.classList.remove('active');
-            });
+function showMenu(menu) {
+    // すべてのメニューボタンの選択状態をリセット
+    document.querySelectorAll('.menu-sections button').forEach(button => {
+        button.classList.remove('active');
+    });
 
-            // 選択されたメニューセクションを表示
-            document.querySelectorAll('.menu-section').forEach(section => {
-                section.classList.remove('active');
-                section.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
-            });
+    // 選択されたメニューセクションを表示
+    document.querySelectorAll('.menu-section').forEach(section => {
+        section.classList.remove('active');
+        section.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+    });
 
-            // 対応するメニューボタンを選択状態にする
-            document.querySelectorAll('.menu-sections button').forEach(button => {
-                if (button.getAttribute('onclick') === `showMenu('${menu}')`) {
-                    button.classList.add('active');
-                }
-            });
-
-            // 選択されたメニューセクションを表示
-            document.getElementById(menu).classList.add('active');
-
-            // メニューとオプションをリセット
-            selectedSymptom = '';      // メニューのリセット
-            irradiationsCount = '';    // オプションのリセット
-            menuPrice = 0;             // メニューの価格リセット
-            optionsPrice = 0;          // オプションの価格リセット
-            totalAmount = 0;           // 合計金額リセット
-
-            // 表示を更新
-            updateDisplayInfo();
+    // 対応するメニューボタンを選択状態にする
+    document.querySelectorAll('.menu-sections button').forEach(button => {
+        if (button.getAttribute('onclick') === `showMenu('${menu}')`) {
+            button.classList.add('active');
         }
+    });
+
+    // 選択されたメニューセクションを表示
+    const targetSection = document.getElementById(menu);
+    if (targetSection) {
+        targetSection.classList.add('active');
+    }
+
+    // メニューとオプションをリセット
+    selectedSymptom = '';
+    irradiationsCount = '';
+    menuPrice = 0;
+    optionsPrice = 0;
+    totalAmount = 0;
+
+    // 表示を更新
+    updateDisplayInfo();
+
+    // 📅 カレンダーの表示切り替え
+    const calendarContainer = document.querySelector('.calendar-container');
+const dateLabel = document.getElementById('dateLabel');
+const infoTextMemo = document.getElementById('infoTextMemo');
+
+if (menu === 'Kyousitu') {
+    calendarContainer.style.display = 'none';
+    if (dateLabel) dateLabel.style.display = 'none';
+    if (infoTextMemo) infoTextMemo.style.display = 'none';
+} else {
+    calendarContainer.style.display = 'block';
+    if (dateLabel) dateLabel.style.display = 'block';
+    if (infoTextMemo) infoTextMemo.style.display = 'block';
+}
+}
 
         function selectDate(cell) {
             // "unavailable" クラスが付いている場合はクリックを無効化
@@ -1568,47 +1579,43 @@
             return `${date.getFullYear()}年${('0' + (date.getMonth() + 1)).slice(-2)}月${('0' + date.getDate()).slice(-2)}日`;
         }
 
-        async function fetchAvailability(date) {
-            const startTime = new Date(date);
-            const endTime = new Date(date);
-            endTime.setDate(endTime.getDate() + 7);
+async function fetchAvailability(date, force = false) {
+    const startTime = new Date(date);
+    const endTime = new Date(date);
+    endTime.setDate(endTime.getDate() + 7);
 
-            const cacheKey = startTime.toISOString() + endTime.toISOString();
+    const cacheKey = startTime.toISOString() + endTime.toISOString();
 
-            // キャッシュを確認
-            if (availabilityCache[cacheKey]) {
-                console.log('Using cached data');
-                updateCalendar(availabilityCache[cacheKey].availability, availabilityCache[cacheKey].businessDays);
-                return;
-            }
+    // 💡 キャッシュあり＆force指定なし → キャッシュ使用
+    if (availabilityCache[cacheKey] && !force) {
+        console.log('Using cached data');
+        updateCalendar(availabilityCache[cacheKey].availability, availabilityCache[cacheKey].businessDays);
+        return;
+    }
 
-            const url = 'https://script.google.com/macros/s/AKfycbzX7bSCnXa6Ce2wJ5mMYDW30_y5purOO_nMOL6B6ivCxqzMDLQOj3kRUBe7F3sycp0pSw/exec' +
-                `?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`;
+    const url = 'https://script.google.com/macros/s/AKfycbzX7bSCnXa6Ce2wJ5mMYDW30_y5purOO_nMOL6B6ivCxqzMDLQOj3kRUBe7F3sycp0pSw/exec' +
+        `?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`;
 
-            try {
-                showLoadingSpinner(); // Show loading spinner
-                const response = await fetch(url);
-                const data = await response.json();
-                console.log(data);
+    try {
+        showLoadingSpinner();
+        const response = await fetch(url);
+        const data = await response.json();
 
-                // 営業日の情報を抽出
-                const businessDays = data.filter(event => event.summary === "営業日").map(event => {
-                    return {
-                        start: new Date(event.startTime),
-                        end: new Date(event.endTime)
-                    };
-                });
+        const businessDays = data.filter(event => event.summary === "営業日").map(event => {
+            return {
+                start: new Date(event.startTime),
+                end: new Date(event.endTime)
+            };
+        });
 
-                // データをキャッシュに保存
-                availabilityCache[cacheKey] = { availability: data, businessDays: businessDays };
-
-                updateCalendar(data, businessDays);
-            } catch (error) {
-                console.error('Error fetching availability:', error);
-            } finally {
-                hideLoadingSpinner(); // Hide loading spinner
-            }
-        }
+        availabilityCache[cacheKey] = { availability: data, businessDays };
+        updateCalendar(data, businessDays);
+    } catch (error) {
+        console.error('Error fetching availability:', error);
+    } finally {
+        hideLoadingSpinner();
+    }
+}
 
         // 時間を正規化する関数（27時までを当日として扱う）
         function normalizeTime(date) {
@@ -1814,8 +1821,16 @@
                     cell.setAttribute('data-date', slotStart.toISOString());
                 }
             }
-
         }
+
+window.onload = () => {
+    fetchAvailability(currentDate); // 初回読み込みはcurrentDate基準に変更
+
+    setInterval(() => {
+        console.log("⏰ 1分経ったので再読み込みするYO〜！");
+        fetchAvailability(currentDate); // ← 今見てる週の情報を再取得！
+    }, 5000); // 60秒ごと（※コメントと一致させるため修正）
+};
 
         function updateCalendarHeader(date) {
             const headerRow = document.getElementById('calendar-header');

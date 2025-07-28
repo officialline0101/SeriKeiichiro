@@ -1823,15 +1823,6 @@ async function fetchAvailability(date, force = false) {
             }
         }
 
-window.onload = () => {
-    fetchAvailability(currentDate); // 初回読み込みはcurrentDate基準に変更
-
-    setInterval(() => {
-        console.log("⏰ 1分経ったので再読み込みするYO〜！");
-        fetchAvailability(currentDate); // ← 今見てる週の情報を再取得！
-    }, 5000); // 60秒ごと（※コメントと一致させるため修正）
-};
-
         function updateCalendarHeader(date) {
             const headerRow = document.getElementById('calendar-header');
             const headers = headerRow.querySelectorAll('th:not(:first-child)');

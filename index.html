@@ -821,7 +821,6 @@
         </div>
 
         <div class="label" id="course">メニューをお選びください</div>
-        <div class="info-text">8/5から料金かわります。詳細はプロフィール欄</div>
         <div class="menu-sections">
             <button type="button" onclick="showMenu('male')">1名様</button>
             <button type="button" onclick="showMenu('female')">2名様</button>
@@ -838,10 +837,10 @@
             </div>
             <div class="symptoms">
                 <button type="button" onclick="selectSymptom(this, 'treatment1')" data-price="1500">10分鑑定</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment2')" data-price="2500">20分鑑定</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment3')" data-price="3500">30分鑑定</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment4')" data-price="4500">40分鑑定</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment5')" data-price="5500">50分鑑定</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment2')" data-price="3000">20分鑑定</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment3')" data-price="4500">30分鑑定</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment4')" data-price="6000">40分鑑定</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment5')" data-price="7500">50分鑑定</button>
             </div>
             <div class="highlight-background">
                 <span class="highlight-text">オプション</span>
@@ -858,10 +857,10 @@
             </div>
             <div class="symptoms">
                 <button type="button" onclick="selectSymptom(this, 'treatment6')" data-price="3000">10分ずつ計20分鑑定</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment7')" data-price="5000">20分ずつ計40分鑑定</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment8')" data-price="7000">30分ずつ計60分鑑定</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment9')" data-price="9000">40分ずつ計80分鑑定</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment10')" data-price="11000">50分ずつ計100分鑑定</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment7')" data-price="6000">20分ずつ計40分鑑定</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment8')" data-price="9000">30分ずつ計60分鑑定</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment9')" data-price="12000">40分ずつ計80分鑑定</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment10')" data-price="15000">50分ずつ計100分鑑定</button>
             </div>
         </div>
 
@@ -871,10 +870,10 @@
             </div>
             <div class="symptoms">
                 <button type="button" onclick="selectSymptom(this, 'treatment11')" data-price="4500">10分ずつ計30分鑑定</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment12')" data-price="7500">20分ずつ計60分鑑定</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment13')" data-price="10500">30分ずつ計90分鑑定</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment14')" data-price="13500">40分ずつ計120分鑑定</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment15')" data-price="16500">50分ずつ計150分鑑定</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment12')" data-price="9000">20分ずつ計60分鑑定</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment13')" data-price="13500">30分ずつ計90分鑑定</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment14')" data-price="18500">40分ずつ計120分鑑定</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment15')" data-price="22500">50分ずつ計150分鑑定</button>
             </div>
         </div>
 
@@ -1266,35 +1265,35 @@
             const treatmentText = document.getElementById('treatment-text');
 
             if (treatmentId === 'treatment1') {
-                treatmentText.innerHTML = `<div style="text-align: left;">1名様：10分鑑定</div><div style="text-align: right;"><strong>料金：1,500円</strong></div>`;
+                treatmentText.innerHTML = `<div style="text-align: left;">1名様：10分鑑定</div><div style="text-align: right;"><strong><span style="color:#ff0000;">料金：1,500円</span></strong></div>`;
             } else if (treatmentId === 'treatment2') {
-                treatmentText.innerHTML = `<div style="text-align: left;">1名様：20分鑑定</div><div style="text-align: right;"><strong>料金：2,500円</strong></div>`;
+                treatmentText.innerHTML = `<div style="text-align: left;">1名様：20分鑑定</div><div style="text-align: right;"><strong><span style="color:#ff0000;">料金：3,000円</span></strong></div>`;
             } else if (treatmentId === 'treatment3') {
-                treatmentText.innerHTML = `<div style="text-align: left;">1名様：30分鑑定</div><div style="text-align: right;"><strong>料金：3,500円</strong></div>`;
+                treatmentText.innerHTML = `<div style="text-align: left;">1名様：30分鑑定</div><div style="text-align: right;"><strong><span style="color:#ff0000;">料金：4,500円</span></strong></div>`;
             } else if (treatmentId === 'treatment4') {
-                treatmentText.innerHTML = `<div style="text-align: left;">1名様：40分鑑定</div><div style="text-align: right;"><strong>料金：4,500円</strong></div>`;
+                treatmentText.innerHTML = `<div style="text-align: left;">1名様：40分鑑定</div><div style="text-align: right;"><strong><span style="color:#ff0000;">料金：6,000円</span></strong></div>`;
             } else if (treatmentId === 'treatment5') {
-                treatmentText.innerHTML = `<div style="text-align: left;">1名様：50分鑑定</div><div style="text-align: right;"><strong>料金：5,500円</strong></div>`;
+                treatmentText.innerHTML = `<div style="text-align: left;">1名様：50分鑑定</div><div style="text-align: right;"><strong><span style="color:#ff0000;">料金：7,500円</span></strong></div>`;
             } else if (treatmentId === 'treatment6') {
-                treatmentText.innerHTML = `<div style="text-align: left;">2名様：10分ずつ計20分鑑定</div><div style="text-align: right;"><strong>料金：3,000円</strong></div>`;
+                treatmentText.innerHTML = `<div style="text-align: left;">2名様：10分ずつ計20分鑑定</div><div style="text-align: right;"><strong><span style="color:#ff0000;">料金：3,000円</span></strong></div>`;
             } else if (treatmentId === 'treatment7') {
-                treatmentText.innerHTML = `<div style="text-align: left;">2名様：20分ずつ計40分鑑定</div><div style="text-align: right;"><strong>料金：5,000円</strong></div>`;
+                treatmentText.innerHTML = `<div style="text-align: left;">2名様：20分ずつ計40分鑑定</div><div style="text-align: right;"><strong><span style="color:#ff0000;">料金：6,000円</span></strong></div>`;
             } else if (treatmentId === 'treatment8') {
-                treatmentText.innerHTML = `<div style="text-align: left;">2名様：30分ずつ計60分鑑定</div><div style="text-align: right;"><strong>料金：7,000円</strong></div>`;
+                treatmentText.innerHTML = `<div style="text-align: left;">2名様：30分ずつ計60分鑑定</div><div style="text-align: right;"><strong><span style="color:#ff0000;">料金：9,000円</span></strong></div>`;
             } else if (treatmentId === 'treatment9') {
-                treatmentText.innerHTML = `<div style="text-align: left;">2名様：40分ずつ計80分鑑定</div><div style="text-align: right;"><strong>料金：9,000円</strong></div>`;
+                treatmentText.innerHTML = `<div style="text-align: left;">2名様：40分ずつ計80分鑑定</div><div style="text-align: right;"><strong><span style="color:#ff0000;">料金：12,000円</span></strong></div>`;
             } else if (treatmentId === 'treatment10') {
-                treatmentText.innerHTML = `<div style="text-align: left;">2名様：50分ずつ計100分鑑定</div><div style="text-align: right;"><strong>料金：11000円</strong></div>`;
+                treatmentText.innerHTML = `<div style="text-align: left;">2名様：50分ずつ計100分鑑定</div><div style="text-align: right;"><strong><span style="color:#ff0000;">料金：15,000円</span></strong></div>`;
             } else if (treatmentId === 'treatment11') {
-                treatmentText.innerHTML = `<div style="text-align: left;">3名様：10分ずつ計30分鑑定</div><div style="text-align: right;"><strong>料金：1500円ずつ計4500円</strong></div>`;
+                treatmentText.innerHTML = `<div style="text-align: left;">3名様：10分ずつ計30分鑑定</div><div style="text-align: right;"><strong><span style="color:#ff0000;">料金：4,500円</span></strong></div>`;
             } else if (treatmentId === 'treatment12') {
-                treatmentText.innerHTML = `<div style="text-align: left;">3名様：20分ずつ計60分鑑定</div><div style="text-align: right;"><strong>料金：2500円ずつ計7500円</strong></div>`;
+                treatmentText.innerHTML = `<div style="text-align: left;">3名様：20分ずつ計60分鑑定</div><div style="text-align: right;"><strong><span style="color:#ff0000;">料金：9,000円</span></strong></div>`;
             } else if (treatmentId === 'treatment13') {
-                treatmentText.innerHTML = `<div style="text-align: left;">3名様：30分ずつ計90分鑑定</div><div style="text-align: right;"><strong>料金：3500円ずつ計10500円</strong></div>`;
+                treatmentText.innerHTML = `<div style="text-align: left;">3名様：30分ずつ計90分鑑定</div><div style="text-align: right;"><strong><span style="color:#ff0000;">料金：13,500円</span></strong></div>`;
             } else if (treatmentId === 'treatment14') {
-                treatmentText.innerHTML = `<div style="text-align: left;">3名様：40分ずつ計120分鑑定</div><div style="text-align: right;"><strong>料金：4500円ずつ計13500円</strong></div>`;
+                treatmentText.innerHTML = `<div style="text-align: left;">3名様：40分ずつ計120分鑑定</div><div style="text-align: right;"><strong><span style="color:#ff0000;">料金：18,500円</span></strong></div>`;
             } else if (treatmentId === 'treatment15') {
-                treatmentText.innerHTML = `<div style="text-align: left;">3名様：50分ずつ計150分鑑定</div><div style="text-align: right;"><strong>料金：5500円ずつ計16500円</strong></div>`;
+                treatmentText.innerHTML = `<div style="text-align: left;">3名様：50分ずつ計150分鑑定</div><div style="text-align: right;"><strong><span style="color:#ff0000;">料金：22,500円</span></strong></div>`;
             } else if (treatmentId === 'treatment16') {
                 treatmentText.innerHTML = `<div style="text-align: left;">1名様：60分鑑定</div><div style="text-align: right;"><strong><span style="color:#ff0000;">料金：9,000円</span></strong></div>`;
             } else if (treatmentId === 'treatment17') {

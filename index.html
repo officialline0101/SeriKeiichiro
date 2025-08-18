@@ -915,7 +915,7 @@
                 <span class="highlight-text">◆占い教室◆</span>
             </div>
             <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this, 'treatment21')" data-price="4000">タロット講座</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment21')"  data-price="4000">タロット講座</button>
                 <div class="info-texturanai">⇧タップしてください⇧<br>毎月第1、第3火曜日で希望日をご入力ください。<br>例.7月第1火曜日</div>
                 <input type="text" id="kibounitizi" placeholder="希望日を入力してください">
             </div>
@@ -1374,6 +1374,9 @@
                 });
             }
 
+    // 🔽 ここで日付選択もリセット
+    selectedFullDate = '';
+
             // 表示を更新
             updateDisplayInfo();
         }
@@ -1469,6 +1472,13 @@ function showMenu(menu) {
     optionsPrice = 0;
     totalAmount = 0;
 
+// 🔽 ここで日付選択もリセット
+selectedFullDate = '';
+const kibounitiziInput = document.getElementById('kibounitizi');
+if (kibounitiziInput) {
+    kibounitiziInput.value = '';
+}
+
     // 表示を更新
     updateDisplayInfo();
 
@@ -1555,6 +1565,11 @@ if (menu === 'Kyousitu') {
                 alert('メニューを選択してください。');
                 return;
             }
+
+if (!formData.dates[0] && !formData.kibounitizi) {
+    alert('希望日時が未入力です。');
+    return;
+}
 
     // メッセージを組み立て
     let message = `【予約フォーム】

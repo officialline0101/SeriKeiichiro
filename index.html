@@ -826,7 +826,6 @@
             <button type="button" onclick="showMenu('female')">2名様</button>
             <button type="button" onclick="showMenu('whitening')">3名様</button>
             <button type="button" onclick="showMenu('Geimei')">芸名（店名）判断</button>
-            <button type="button" onclick="showMenu('Kyousitu')">占い教室</button>
         </div>
 
         <div id="treatment-text" style="margin-bottom: 20px;"></div>
@@ -836,7 +835,6 @@
                 <span class="highlight-text">◆1名様◆</span>
             </div>
             <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this, 'treatment1')" data-price="1500">10分鑑定</button>
                 <button type="button" onclick="selectSymptom(this, 'treatment2')" data-price="3000">20分鑑定</button>
                 <button type="button" onclick="selectSymptom(this, 'treatment3')" data-price="4500">30分鑑定</button>
                 <button type="button" onclick="selectSymptom(this, 'treatment4')" data-price="6000">40分鑑定</button>
@@ -858,7 +856,6 @@
                 <span class="highlight-text">◆2名様◆</span>
             </div>
             <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this, 'treatment6')" data-price="3000">10分ずつ計20分鑑定</button>
                 <button type="button" onclick="selectSymptom(this, 'treatment7')" data-price="6000">20分ずつ計40分鑑定</button>
                 <button type="button" onclick="selectSymptom(this, 'treatment8')" data-price="9000">30分ずつ計60分鑑定</button>
                 <button type="button" onclick="selectSymptom(this, 'treatment9')" data-price="12000">40分ずつ計80分鑑定</button>
@@ -877,7 +874,6 @@
                 <span class="highlight-text">◆3名様◆</span>
             </div>
             <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this, 'treatment11')" data-price="4500">10分ずつ計30分鑑定</button>
                 <button type="button" onclick="selectSymptom(this, 'treatment12')" data-price="9000">20分ずつ計60分鑑定</button>
                 <button type="button" onclick="selectSymptom(this, 'treatment13')" data-price="13500">30分ずつ計90分鑑定</button>
                 <button type="button" onclick="selectSymptom(this, 'treatment14')" data-price="18500">40分ずつ計120分鑑定</button>
@@ -1696,7 +1692,7 @@ async function fetchAvailability(date, force = false) {
                 '20:00', '20:30',
                 '21:00', '21:30',
                 '22:00', '22:30',
-                '23:00', '23:30'
+                '23:00'
             ];
 
             // テーブルの行を作成（初回のみ）

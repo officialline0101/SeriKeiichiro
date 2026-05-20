@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>占屋伊千夜 ご予約フォーム</title>
 
+<!-- GAS preconnect: TLS/DNSを先行 -->
+<link rel="preconnect" href="https://script.google.com" crossorigin />
+<link rel="preconnect" href="https://script.googleusercontent.com" crossorigin />
+<link rel="dns-prefetch" href="https://script.google.com" />
+<link rel="dns-prefetch" href="https://script.googleusercontent.com" />
+
 <!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -364,6 +370,27 @@ input,select,textarea{font:inherit;color:inherit}
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   background:var(--surface);gap:8px;padding:24px;
 }
+/* スケルトン中のセル */
+.cal-grid.skeleton .c{color:transparent;background:#F4F0DD;cursor:default;animation:cal-skel 1.4s ease-in-out infinite;}
+@keyframes cal-skel{
+  0%,100%{background:#F4F0DD}
+  50%{background:#E9E1C2}
+}
+/* グリッド上に重ねる「読み込み中」バッジ */
+#cal-body{position:relative}
+.cal-overlay{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  background:var(--ink);color:var(--brand);
+  font-family:var(--font-head);font-size:12px;letter-spacing:.04em;
+  padding:6px 14px;border-radius:var(--r-pill);
+  display:flex;align-items:center;gap:8px;
+  box-shadow:0 4px 14px rgba(0,0,0,.15);
+  z-index:3;pointer-events:none;
+}
+.cal-overlay .spinner{
+  width:14px;height:14px;border-width:2px;
+  border-color:var(--brand-soft);border-top-color:var(--brand);
+}
 .spinner{
   width:36px;height:36px;border-radius:50%;
   border:4px solid var(--brand-soft);
@@ -607,10 +634,10 @@ input,select,textarea{font:inherit;color:inherit}
       <div id="school-info" class="school-info" hidden></div>
     </section>
 
-    <div class="divider"></div>
+    <div class="divider" id="sec-date-divider" hidden></div>
 
     <!-- ─────────────────── 希望日時 ─────────────────── -->
-    <section class="sec" id="sec-date">
+    <section class="sec" id="sec-date" hidden>
       <div class="sec-head">
         <span class="ico">▤</span>
         希望日時
@@ -703,6 +730,37 @@ input,select,textarea{font:inherit;color:inherit}
 /* ---------- LIFF ---------- */
 const LIFF_ID = '2006616429-V0q85Yed';
 const API_URL = 'https://script.google.com/macros/s/AKfycbzX7bSCnXa6Ce2wJ5mMYDW30_y5purOO_nMOL6B6ivCxqzMDLQOj3kRUBe7F3sycp0pSw/exec';
+
+/* ---------- 旧 localStorage キャッシュの掃除（過去バージョンの残骸を削除） ---------- */
+try {
+  for (let i = localStorage.length - 1; i >= 0; i--){
+    const k = localStorage.key(i);
+    if (k && k.startsWith('cal_v1_')) localStorage.removeItem(k);
+  }
+} catch(e){}
+
+/* ---------- 初週分の events を script 解釈中に先行 fetch ----------
+   ・フォームを開いた瞬間に Google カレンダーへ問い合わせる
+   ・キャッシュは一切しない（毎回フレッシュに取得）
+   ・addDays 等のヘルパは未宣言なのでここではインライン計算する */
+const _earlyWeekStart = (() => {
+  const t = new Date(); t.setHours(0,0,0,0);
+  t.setDate(t.getDate() - t.getDay());   // 今週の日曜 0:00
+  return t;
+})();
+const _earlyWeekEnd = new Date(_earlyWeekStart);
+_earlyWeekEnd.setDate(_earlyWeekEnd.getDate() + 7);
+const _earlyStartISO = _earlyWeekStart.toISOString();
+const _earlyEndISO   = _earlyWeekEnd.toISOString();
+const _earlyKey      = _earlyStartISO + '|' + _earlyEndISO;
+let   _earlyFetchPromise = fetch(
+  `${API_URL}?startTime=${encodeURIComponent(_earlyStartISO)}`
+  + `&endTime=${encodeURIComponent(_earlyEndISO)}`,
+  { cache: 'no-store' }
+)
+  .then(r => r.json())
+  .then(d => Array.isArray(d) ? d : [])
+  .catch(e => { console.warn('Early calendar fetch failed', e); return []; });
 
 (function initLiff(){
   if (typeof liff === 'undefined') return;
@@ -924,6 +982,7 @@ function selectGroup(gid){
   renderOptions();
   toggleDateBlock();
   renderSchoolInfo();
+  updateDateSectionVisibility();
   renderSummary();
   // 切替えたらカレンダー再描画（所要時間が変わるため）
   renderCalendar();
@@ -949,6 +1008,7 @@ function renderMenus(){
       list.querySelectorAll('.menu-item').forEach(x =>
         x.setAttribute('aria-pressed', x.dataset.mid === state.menuId ? 'true' : 'false')
       );
+      updateDateSectionVisibility();
       renderSummary();
       renderCalendar();
     });
@@ -1007,6 +1067,14 @@ function toggleDateBlock(){
   document.getElementById('school-block').hidden = !isSchool;
 }
 
+/* ---------- 希望日時セクションの表示制御
+   メニューが未選択のうちは「希望日時」セクションごと隠す ---------- */
+function updateDateSectionVisibility(){
+  const show = !!state.menuId;
+  document.getElementById('sec-date').hidden = !show;
+  document.getElementById('sec-date-divider').hidden = !show;
+}
+
 /* ---------- 占い教室 開催案内ボックス ---------- */
 function renderSchoolInfo(){
   const root = document.getElementById('school-info');
@@ -1030,7 +1098,6 @@ function renderSchoolInfo(){
 const cal = {
   weekStart: null,    // Date (Sunday-aligned)
   events: [],         // for current week
-  cache: new Map(),   // key=weekStartISO -> events array
   loading: false
 };
 
@@ -1071,44 +1138,49 @@ function fmtMonthBadge(d){
 
 async function renderCalendar(){
   if (!cal.weekStart) return;
-  const body = document.getElementById('cal-body');
+  // 希望日時セクションが非表示（メニュー未選択など）の間は描画も fetch もしない。
+  // 早期 fetch (_earlyFetchPromise) は裏で走り続けるので、
+  // メニュー選択でセクションが表示された瞬間にその結果を即座に利用できる。
+  if (document.getElementById('sec-date').hidden) return;
+
   const monthEl = document.getElementById('cal-month');
   monthEl.textContent = fmtMonthBadge(cal.weekStart);
 
-  // loading shell
-  body.innerHTML = `
-    <div class="cal-loading">
-      <div class="spinner" aria-hidden="true"></div>
-      <div class="txt">読み込み中...</div>
-    </div>
-  `;
+  // 即座にスケルトンを描画（fetch 中の体感速度向上）
+  drawCalendar({ loading: true });
 
   const startISO = cal.weekStart.toISOString();
-  const endDate  = addDays(cal.weekStart, 7);
-  const endISO   = endDate.toISOString();
-  const cacheKey = startISO + '|' + endISO;
+  const endISO   = addDays(cal.weekStart, 7).toISOString();
+  const fetchKey = startISO + '|' + endISO;
 
+  // 毎回必ず最新を fetch する（キャッシュは使わない）
   let events;
-  if (cal.cache.has(cacheKey)){
-    events = cal.cache.get(cacheKey);
-  } else {
-    try{
-      const url = `${API_URL}?startTime=${encodeURIComponent(startISO)}&endTime=${encodeURIComponent(endISO)}`;
-      const res = await fetch(url);
+  try {
+    if (fetchKey === _earlyKey && _earlyFetchPromise){
+      // 初回ロード時の今週分は、script 解釈中に投げた fetch を再利用
+      events = await _earlyFetchPromise;
+      _earlyFetchPromise = null;
+    } else {
+      const url = `${API_URL}?startTime=${encodeURIComponent(startISO)}`
+                + `&endTime=${encodeURIComponent(endISO)}`;
+      const res = await fetch(url, { cache: 'no-store' });
       const data = await res.json();
       events = Array.isArray(data) ? data : [];
-      cal.cache.set(cacheKey, events);
-    }catch(e){
-      console.warn('Calendar fetch failed', e);
-      events = [];
-      cal.cache.set(cacheKey, events);
     }
+  } catch(e){
+    console.warn('Calendar fetch failed', e);
+    events = [];
   }
+
+  // 連打対策: await 中に別週へ切り替わっていたらこの結果は破棄
+  if (cal.weekStart.toISOString() !== startISO) return;
+
   cal.events = events;
-  drawCalendar();
+  drawCalendar({ loading: false });
 }
 
-function drawCalendar(){
+function drawCalendar(opts){
+  const loading = !!(opts && opts.loading);
   const body = document.getElementById('cal-body');
   const start = cal.weekStart;
   const days = [];
@@ -1142,7 +1214,7 @@ function drawCalendar(){
   const nowReal    = new Date();
 
   // build header
-  let html = '<div class="cal-grid">';
+  let html = `<div class="cal-grid${loading ? ' skeleton' : ''}">`;
   html += '<div class="h corner">時間</div>';
   days.forEach((d, i) => {
     const iso = dateISO(d);
@@ -1209,20 +1281,29 @@ function drawCalendar(){
     });
   });
   html += '</div>';
+  if (loading){
+    html += `
+      <div class="cal-overlay" role="status" aria-live="polite">
+        <div class="spinner" aria-hidden="true"></div>
+        <span>読み込み中…</span>
+      </div>`;
+  }
   body.innerHTML = html;
 
-  // attach click
-  body.querySelectorAll('.c.available').forEach(el => {
-    el.addEventListener('click', () => {
-      state.selectedSlot = {
-        dateISO: el.dataset.date,
-        time:    el.dataset.time
-      };
-      drawCalendar();
-      renderSelectedBanner();
-      renderSummary();
+  // attach click（loading 中は紐付けない）
+  if (!loading){
+    body.querySelectorAll('.c.available').forEach(el => {
+      el.addEventListener('click', () => {
+        state.selectedSlot = {
+          dateISO: el.dataset.date,
+          time:    el.dataset.time
+        };
+        drawCalendar();
+        renderSelectedBanner();
+        renderSummary();
+      });
     });
-  });
+  }
   renderSelectedBanner();
 }
 
@@ -1454,6 +1535,7 @@ function init(){
   renderSchoolInfo();
   renderMenus();
   renderOptions();
+  updateDateSectionVisibility();
   calInit();
   renderSummary();
 

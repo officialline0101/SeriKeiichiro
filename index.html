@@ -843,7 +843,11 @@ const GROUPS = [
   },
   {
     id:'g6', name:'占いスキル指導',
-    options:[],
+    options:[
+      {id:'opt-mensetsu', name:'対面指導', price:0},
+      {id:'opt-tel-sk',   name:'電話指導',     price:0},
+      {id:'opt-video-sk', name:'ビデオ通話指導', price:0}
+    ],
     menus:[
       {id:'m6-1', name:'算命学講座',     price:15300, dur:120},
       {id:'m6-2', name:'タロット講座指導', price:9000,  dur:120},

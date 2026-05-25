@@ -1072,11 +1072,11 @@ function toggleDateBlock(){
 }
 
 /* ---------- 希望日時セクションの表示制御
-   メニューが未選択のうちは「希望日時」セクションごと隠す ---------- */
+   常に表示する（メニュー未選択でも表示） ---------- */
 function updateDateSectionVisibility(){
-  const show = !!state.menuId;
-  document.getElementById('sec-date').hidden = !show;
-  document.getElementById('sec-date-divider').hidden = !show;
+  // 常に表示
+  document.getElementById('sec-date').hidden = false;
+  document.getElementById('sec-date-divider').hidden = false;
 }
 
 /* ---------- 占い教室 開催案内ボックス ---------- */
@@ -1142,10 +1142,9 @@ function fmtMonthBadge(d){
 
 async function renderCalendar(){
   if (!cal.weekStart) return;
-  // 希望日時セクションが非表示（メニュー未選択など）の間は描画も fetch もしない。
+  // 希望日時セクションは常に表示するため、非表示チェックは行わない。
   // 早期 fetch (_earlyFetchPromise) は裏で走り続けるので、
-  // メニュー選択でセクションが表示された瞬間にその結果を即座に利用できる。
-  if (document.getElementById('sec-date').hidden) return;
+  // 初回表示時にその結果を即座に利用できる。
 
   const monthEl = document.getElementById('cal-month');
   monthEl.textContent = fmtMonthBadge(cal.weekStart);

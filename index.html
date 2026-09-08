@@ -543,6 +543,7 @@ input,select,textarea{font:inherit;color:inherit}
       <span class="badge">お知らせ</span>
       より詳細な予約はチャットにてお願いします<br />
       例：4名様以上／10〜11時や0〜3時の予約等
+      <span class="old-price-notice" hidden><br />9月13日までの鑑定は旧料金でのご案内になります。</span>
     </div>
 
     <!-- ─────────────────── 一人目 ─────────────────── -->
@@ -702,6 +703,7 @@ input,select,textarea{font:inherit;color:inherit}
         <span class="ico">▣</span>
         ご予約内容
       </div>
+      <div class="note old-price-notice" hidden style="margin-bottom:10px;">9月13日までの鑑定は旧料金でのご案内になります。</div>
       <div id="summary" class="summary">
         <div class="empty">入力内容がここに表示されます</div>
       </div>
@@ -791,6 +793,28 @@ const HOLIDAYS = new Set([
   '2028-11-23'
 ]);
 
+/* ---------- 料金改定（2026-09-14〜新料金） ----------
+   ・OLD_PRICE_LAST_DAY までの鑑定日は旧料金（oldPrice）を適用
+   ・お知らせ文は NOTICE_HIDE_FROM（JST 0:00）以降は自動で非表示 */
+const OLD_PRICE_LAST_DAY = '2026-09-13';
+const NOTICE_HIDE_FROM   = '2026-09-14';
+function isOldPriceNoticeActive(){
+  return Date.now() < Date.parse(NOTICE_HIDE_FROM + 'T00:00:00+09:00');
+}
+function isOldPriceDate(dateISO){
+  return !!dateISO && dateISO <= OLD_PRICE_LAST_DAY;
+}
+/* 選択中の鑑定日に応じたメニュー料金 */
+function menuPrice(m){
+  if (!m) return 0;
+  if (m.oldPrice != null && state.selectedSlot && isOldPriceDate(state.selectedSlot.dateISO)) return m.oldPrice;
+  return m.price;
+}
+function isOldPriceApplied(){
+  const m = currentMenu();
+  return !!(m && m.oldPrice != null && state.selectedSlot && isOldPriceDate(state.selectedSlot.dateISO));
+}
+
 /* ---------- Menu data ---------- */
 const GROUPS = [
   {
@@ -801,30 +825,30 @@ const GROUPS = [
       {id:'opt-ai',    name:'+AI録音 ※詳細はプロフィール欄', price:1000}
     ],
     menus:[
-      {id:'m1-2', name:'20分鑑定', price:3000, dur:30},
-      {id:'m1-3', name:'30分鑑定', price:4500, dur:40},
-      {id:'m1-4', name:'40分鑑定', price:6000, dur:50},
-      {id:'m1-5', name:'50分鑑定', price:7500, dur:60}
+      {id:'m1-2', name:'20分鑑定', price:3500, oldPrice:3000, dur:30},
+      {id:'m1-3', name:'30分鑑定', price:5000, oldPrice:4500, dur:40},
+      {id:'m1-4', name:'40分鑑定', price:6500, oldPrice:6000, dur:50},
+      {id:'m1-5', name:'50分鑑定', price:8000, oldPrice:7500, dur:60}
     ]
   },
   {
     id:'g2', name:'2名様',
     options:[ {id:'opt-ai', name:'+AI録音 ※詳細はプロフィール欄', price:1000} ],
     menus:[
-      {id:'m2-2', name:'20分ずつ計40分鑑定',  price:6000,  dur:50},
-      {id:'m2-3', name:'30分ずつ計60分鑑定',  price:9000,  dur:70},
-      {id:'m2-4', name:'40分ずつ計80分鑑定',  price:12000, dur:90},
-      {id:'m2-5', name:'50分ずつ計100分鑑定', price:15000, dur:110}
+      {id:'m2-2', name:'20分ずつ計40分鑑定',  price:7000,  oldPrice:6000,  dur:50},
+      {id:'m2-3', name:'30分ずつ計60分鑑定',  price:10000, oldPrice:9000,  dur:70},
+      {id:'m2-4', name:'40分ずつ計80分鑑定',  price:13000, oldPrice:12000, dur:90},
+      {id:'m2-5', name:'50分ずつ計100分鑑定', price:16000, oldPrice:15000, dur:110}
     ]
   },
   {
     id:'g3', name:'3名様',
     options:[ {id:'opt-ai', name:'+AI録音 ※詳細はプロフィール欄', price:1000} ],
     menus:[
-      {id:'m3-2', name:'20分ずつ計60分鑑定',  price:9000,  dur:70},
-      {id:'m3-3', name:'30分ずつ計90分鑑定',  price:13500, dur:100},
-      {id:'m3-4', name:'40分ずつ計120分鑑定', price:18500, dur:130},
-      {id:'m3-5', name:'50分ずつ計150分鑑定', price:22500, dur:160}
+      {id:'m3-2', name:'20分ずつ計60分鑑定',  price:10500, oldPrice:9000,  dur:70},
+      {id:'m3-3', name:'30分ずつ計90分鑑定',  price:15000, oldPrice:13500, dur:100},
+      {id:'m3-4', name:'40分ずつ計120分鑑定', price:20000, oldPrice:18500, dur:130},
+      {id:'m3-5', name:'50分ずつ計150分鑑定', price:24000, oldPrice:22500, dur:160}
     ]
   },
   {
@@ -1001,7 +1025,7 @@ function renderMenus(){
   list.innerHTML = g.menus.map(m => `
     <button type="button" class="menu-item" data-mid="${m.id}">
       <span class="name">${m.name}</span>
-      <span class="price">${yenFmt(m.price)}</span>
+      <span class="price">${yenFmt(menuPrice(m))}</span>
     </button>
   `).join('');
   list.querySelectorAll('.menu-item').forEach(b => {
@@ -1056,7 +1080,7 @@ function currentOptions(){
 }
 function totalPrice(){
   const m = currentMenu(); if (!m) return 0;
-  return m.price + currentOptions().reduce((s,o)=>s+o.price,0);
+  return menuPrice(m) + currentOptions().reduce((s,o)=>s+o.price,0);
 }
 function totalDuration(){
   const m = currentMenu(); if (!m) return 0;
@@ -1303,6 +1327,7 @@ function drawCalendar(opts){
         };
         drawCalendar();
         renderSelectedBanner();
+        renderMenus();
         renderSummary();
       });
     });
@@ -1391,9 +1416,12 @@ function renderSummary(){
     const menuStr = m.name + (opts.length ? `, ${opts.map(o=>o.name).join(', ')}` : '');
     push('メニュー', escapeHtml(menuStr), 'sec-menu');
     // total price row
+    const oldNote = isOldPriceApplied()
+      ? `<br><span style="font-size:11px;color:var(--ink-2);font-family:var(--font-body);">※9月13日までの鑑定のため旧料金</span>`
+      : '';
     rows.push(`<div class="row total">
       <span class="k">合計金額</span>
-      <span class="v">${yenFmt(totalPrice())}</span>
+      <span class="v">${yenFmt(totalPrice())}${oldNote}</span>
     </div>`);
   }
 
@@ -1509,6 +1537,9 @@ function submit(){
    ===================================================================== */
 function init(){
   loadLS();
+
+  // 旧料金のお知らせ（9/14 以降は自動で非表示）
+  document.querySelectorAll('.old-price-notice').forEach(el => { el.hidden = !isOldPriceNoticeActive(); });
 
   buildDOB('dob1', 'dob1');
   buildDOB('dob2', 'dob2');

@@ -305,6 +305,7 @@ input,select,textarea{font:inherit;color:inherit}
   background:var(--ink);color:var(--brand);
   padding:4px 12px;border-radius:var(--r-pill);
   letter-spacing:.04em;
+  white-space:nowrap;flex-shrink:0;
 }
 .cal-navs{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
 .cal-nav{
@@ -330,9 +331,12 @@ input,select,textarea{font:inherit;color:inherit}
   font-family:var(--font-head);
   padding:6px 0 6px;text-align:center;line-height:1.15;
   z-index:2;
+  min-width:0;overflow:hidden;white-space:nowrap;
 }
 .cal-grid .h .dow{font-size:11px}
-.cal-grid .h .dnum{font-size:14px;display:block;margin-top:1px}
+.cal-grid .h .dnum{font-size:15px;display:block;margin-top:1px;font-variant-numeric:tabular-nums}
+/* 月が変わる日（1日）だけ小さく「12/」を添える */
+.cal-grid .h .dnum .mon{font-size:9px;opacity:.75;letter-spacing:0}
 .cal-grid .h.sun,.cal-grid .h.hol{color:var(--accent-deep)}
 .cal-grid .h.sat{color:#1E63D8}
 .cal-grid .h.today{background:var(--brand);}
@@ -516,7 +520,17 @@ input,select,textarea{font:inherit;color:inherit}
   .hero h1{font-size:26px}
   .cal-grid .c{min-height:30px;font-size:13px}
   .cal-grid .h .dnum{font-size:13px}
+  .cal-grid .h .dnum .mon{font-size:8px}
   .cal-nav{font-size:10px;padding:3px 8px}
+  .cal-month{font-size:12px;padding:3px 9px;letter-spacing:0}
+  /* 狭い画面：月バッジを1段目、ナビボタンを2段目に */
+  .cal-bar{flex-wrap:wrap}
+  .cal-navs{flex:1 0 100%;justify-content:center}
+}
+@media (max-width:340px){
+  .cal-grid .h .dow{font-size:10px}
+  .cal-grid .h .dnum{font-size:12px}
+  .cal-grid .h.corner{font-size:9px}
 }
 @media (prefers-reduced-motion: reduce){
   *{transition:none !important;animation:none !important}
@@ -1161,7 +1175,15 @@ function calInit(){
 }
 
 function fmtMonthBadge(d){
-  return `${d.getFullYear()}年／${d.getMonth()+1}月`;
+  // 週が月をまたぐときは「2026年11〜12月」のように両方の月を表示
+  const last = addDays(d, 6);
+  if (last.getMonth() !== d.getMonth()){
+    if (d.getFullYear() !== last.getFullYear()){
+      return `${d.getFullYear()}年${d.getMonth()+1}月〜${last.getFullYear()}年${last.getMonth()+1}月`;
+    }
+    return `${d.getFullYear()}年${d.getMonth()+1}〜${last.getMonth()+1}月`;
+  }
+  return `${d.getFullYear()}年${d.getMonth()+1}月`;
 }
 
 async function renderCalendar(){
@@ -1252,7 +1274,7 @@ function drawCalendar(opts){
     if (dateISO(d) === dateISO(nowLogical)) cls += ' today';
     html += `<div class="${cls}">
       <span class="dow">${DOW[d.getDay()]}</span>
-      <span class="dnum">${d.getMonth()+1}/${d.getDate()}</span>
+      <span class="dnum">${d.getDate() === 1 ? `<span class="mon">${d.getMonth()+1}/</span>` : ''}${d.getDate()}</span>
     </div>`;
   });
 
